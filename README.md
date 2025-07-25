@@ -163,13 +163,6 @@ src/
 
 이 프로젝트는 MIT 라이선스 하에 배포됩니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
 
-## 👨‍💻 작성자
-
-**[Your Name]**
-- GitHub: [@your-username](https://github.com/your-username)
-- Email: your.email@example.com
-- Blog: [your-blog.com](https://your-blog.com)
-
 ## 🙏 감사의 말
 
 이 프로젝트는 React 커뮤니티의 다양한 리소스와 경험을 바탕으로 제작되었습니다. 메모리 관리의 중요성에 대한 인식을 높이는 데 도움이 되기를 바랍니다.
