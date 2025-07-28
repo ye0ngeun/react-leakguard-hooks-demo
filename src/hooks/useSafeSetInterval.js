@@ -12,7 +12,6 @@ export function useSafeSetInterval(callback, delay) {
   const cleanupCalled = useRef(false);
   const intervalActive = useRef(false);
 
-    console.log('setInterval 실행');
     
   useEffect(() => {
     // interval 등록

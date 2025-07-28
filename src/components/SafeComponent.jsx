@@ -1,5 +1,6 @@
 import SafeTimerComponent from './SafeTimerComponent';
 import SafeEventComponent from './SafeEventComponent';
+import SafeAsyncCompoent from './SafeAsyncComponent';
 
 const SafeComponent = ({ id, onEventCount }) => {
   return (
@@ -8,6 +9,7 @@ const SafeComponent = ({ id, onEventCount }) => {
       <div className="text-green-700 space-y-1 text-sm">
         <SafeEventComponent onEventCount={onEventCount}/>
         <SafeTimerComponent/>
+        <SafeAsyncCompoent/>
         <p className="text-xs text-green-600">
           useSafeEventListener로 자동 정리됨
         </p>

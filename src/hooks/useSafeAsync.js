@@ -9,10 +9,10 @@ import { useEffect, useRef, useState, useCallback } from "react";
  * @param {Object} options - 옵션 객체
  * @param {boolean} [options.debug=true] - 디버깅 로그 출력 여부 (기본 값 true)
  * @param {string} [options.taskName="anonymousTask"] - 작업 식별용 이름 (로그 구분용)
- * @param {boolean} [options.keepAlive=false] - 언마운트 시 작업 자동 취소 방지 (기본 값 false)
+ * @param {boolean} [options.keepAlive=false] - 언마운트 시 작업 필요 여부에 따라, cleanup 하기 위함(기본 값 false)
  */
 
-export function useSafeAsync(
+export default function useSafeAsync(
   asyncFn,
   deps = [],
   { debug = true, taskName = "anonymousTask", keepAlive = false } = {}
