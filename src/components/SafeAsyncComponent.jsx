@@ -1,4 +1,5 @@
-import useSafeAsync from '../hooks/useSafeAsync';
+// import useSafeAsync from '../hooks/useSafeAsync';
+import {useSafeAsync} from 'leakguard-hooks/src/hooks/useSafeAsync'
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
