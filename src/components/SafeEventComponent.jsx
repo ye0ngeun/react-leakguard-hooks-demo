@@ -2,7 +2,7 @@ import React from 'react'
 import { useState, useCallback } from 'react';
 import { useSafeEventListener } from '../hooks/useSafeEventListener';
 
-const EventComponent = (onEventCount) => {
+const SafeEventComponent = ({ onEventCount }) => {
   const [scrollCount, setScrollCount] = useState(0);
   const [resizeCount, setResizeCount] = useState(0);
   const [mouseCount, setMouseCount] = useState(0);
@@ -39,4 +39,4 @@ const EventComponent = (onEventCount) => {
   )
 }
 
-export default EventComponent
+export default SafeEventComponent

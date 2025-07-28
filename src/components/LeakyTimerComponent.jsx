@@ -1,4 +1,3 @@
-import React from 'react'
 import { useState } from 'react';
 const LeakyTimerComponent = () => {
   const [timerCount, setTimerCount ] = useState(0);  

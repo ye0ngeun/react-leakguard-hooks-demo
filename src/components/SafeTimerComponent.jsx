@@ -1,7 +1,6 @@
-import React from 'react'
 import { useSafeSetInterval } from '../hooks/useSafeSetInterval';
 import { useState } from 'react';
-const TimerComponent = () => {
+const SafeTimerComponent = () => {
     const [timerCount, setTimerCount ] = useState(0);
     
     const timerCallback = () => {
@@ -14,4 +13,4 @@ const TimerComponent = () => {
     )
 }
 
-export default TimerComponent
+export default SafeTimerComponent
