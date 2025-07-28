@@ -1,4 +1,6 @@
-import { useSafeSetInterval } from '../hooks/useSafeSetInterval';
+// import { useSafeSetInterval } from '../hooks/useSafeSetInterval';
+import {useSafeSetInterval} from 'leakguard-hooks/src/hooks/useSafeSetInterval'
+
 import { useState } from 'react';
 const SafeTimerComponent = () => {
     const [timerCount, setTimerCount ] = useState(0);

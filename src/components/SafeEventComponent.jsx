@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState, useCallback } from 'react';
-import { useSafeEventListener } from '../hooks/useSafeEventListener';
+// import { useSafeEventListener } from '../hooks/useSafeEventListener';
+import {useSafeEventListener} from 'leakguard-hooks/src/hooks/useSafeEventListener'
 
 const SafeEventComponent = ({ onEventCount }) => {
   const [scrollCount, setScrollCount] = useState(0);
