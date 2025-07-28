@@ -6,12 +6,18 @@ import SafeComponent from './components/SafeComponent';
 const MemoryLeakDemo = () => {
   const [leakyComponents, setLeakyComponents] = useState([]);
   const [safeComponents, setSafeComponents] = useState([]);
-  const [memoryStats, setMemoryStats] = useState({ leak: 0, safe: 0 });
+  const [eventLog, setEventLog] = useState([]);
   const [isMonitoring, setIsMonitoring] = useState(false);
 
-  const handleMemoryUpdate = useCallback((type, count) => {
-    setMemoryStats(prev => ({ ...prev, [type]: count }));
-  }, []);
+  const handleEventCount = useCallback((type, eventName) => {
+    if (isMonitoring) {
+      const timestamp = new Date().toLocaleTimeString();
+      setEventLog(prev => [
+        ...prev.slice(-9), // 최근 10개만 유지
+        { type, eventName, timestamp, id: Date.now() }
+      ]);
+    }
+  }, [isMonitoring]);
 
   const addLeakyComponent = () => {
     const id = Date.now();
@@ -25,36 +31,23 @@ const MemoryLeakDemo = () => {
 
   const removeAllLeaky = () => {
     setLeakyComponents([]);
-    // 전역 메모리 정리
-    if (window.leakyData) {
-      delete window.leakyData;
-    }
+    console.log('🗑️ 모든 LeakyComponent 제거됨 (하지만 이벤트 리스너는 여전히 활성화!)');
   };
 
   const removeAllSafe = () => {
     setSafeComponents([]);
-    // 전역 메모리 정리
-    if (window.safeData) {
-      delete window.safeData;
-    }
+    console.log('🗑️ 모든 SafeComponent 제거됨 (이벤트 리스너도 자동 정리됨)');
+  };
+
+  const clearEventLog = () => {
+    setEventLog([]);
   };
 
   useEffect(() => {
     if (isMonitoring) {
-      const interval = setInterval(() => {
-        // 메모리 사용량 로깅
-        if (performance.memory) {
-          console.log('메모리 사용량:', {
-            used: `${(performance.memory.usedJSHeapSize / 1048576).toFixed(2)}MB`,
-            total: `${(performance.memory.totalJSHeapSize / 1048576).toFixed(2)}MB`,
-            limit: `${(performance.memory.jsHeapSizeLimit / 1048576).toFixed(2)}MB`,
-            leakyData: window.leakyData?.length || 0,
-            safeData: window.safeData?.length || 0
-          });
-        }
-      }, 2000);
-
-      return () => clearInterval(interval);
+      console.log('📊 이벤트 모니터링 시작 - 콘솔에서 이벤트 등록/해제 로그를 확인하세요');
+    } else {
+      console.log('📊 이벤트 모니터링 중지');
     }
   }, [isMonitoring]);
 
@@ -92,7 +85,7 @@ const MemoryLeakDemo = () => {
               </button>
             </div>
             <p className="text-sm text-red-600">
-              누적 메모리 데이터: {memoryStats.leak.toLocaleString()}개
+              활성 컴포넌트: {leakyComponents.length}개
             </p>
           </div>
 
@@ -113,11 +106,26 @@ const MemoryLeakDemo = () => {
               </button>
             </div>
             <p className="text-sm text-green-600">
-              제한된 메모리 데이터: {memoryStats.safe.toLocaleString()}개
+              활성 컴포넌트: {safeComponents.length}개
             </p>
           </div>
         </div>
       </div>
+
+      {isMonitoring && eventLog.length > 0 && (
+        <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+          <h2 className="font-bold text-purple-800 mb-2">📊 실시간 이벤트 로그</h2>
+          <div className="max-h-32 overflow-y-auto space-y-1">
+            {eventLog.map(log => (
+              <div key={log.id} className="text-xs">
+                <span className={log.type === 'leak' ? 'text-red-600' : 'text-green-600'}>
+                  [{log.timestamp}] {log.type === 'leak' ? '❌' : '✅'} {log.eventName}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-4">
@@ -127,7 +135,7 @@ const MemoryLeakDemo = () => {
               <LeakyComponent 
                 key={id} 
                 id={id} 
-                onMemoryUpdate={handleMemoryUpdate}
+                onEventCount={handleEventCount}
               />
             ))}
             {leakyComponents.length === 0 && (
@@ -145,7 +153,7 @@ const MemoryLeakDemo = () => {
               <SafeComponent 
                 key={id} 
                 id={id} 
-                onMemoryUpdate={handleMemoryUpdate}
+                onEventCount={handleEventCount}
               />
             ))}
             {safeComponents.length === 0 && (
@@ -153,6 +161,38 @@ const MemoryLeakDemo = () => {
                 안전한 컴포넌트를 추가해보세요
               </div>
             )}
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+        <h2 className="font-bold text-gray-800 mb-3">🔍 코드 비교</h2>
+        
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <h3 className="font-semibold text-red-600 mb-2">❌ LeakyComponent</h3>
+            <pre className="bg-red-50 p-3 rounded text-xs overflow-x-auto">
+{`useEffect(() => {
+  const handleScroll = () => { /* ... */ };
+  
+  // 수동 등록
+  window.addEventListener('scroll', handleScroll);
+  
+  // ❌ cleanup 함수 없음!
+}, []);`}
+            </pre>
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-green-600 mb-2">✅ SafeComponent</h3>
+            <pre className="bg-green-50 p-3 rounded text-xs overflow-x-auto">
+{`// 커스텀 훅 사용
+useSafeEventListener('scroll', useCallback(() => {
+  /* 동일한 로직 */
+}, []));
+
+// ✅ 자동으로 cleanup됨!`}
+            </pre>
           </div>
         </div>
       </div>
