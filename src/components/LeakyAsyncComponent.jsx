@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { memoryTracker } from '../memoryTracker';
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -7,7 +8,14 @@ function delay(ms) {
 export default function LeakyAsyncComponent() {
   const [user, setUser] = useState(null);
 
+  // Memory simulation - same size as SafeAsyncComponent
+  const memoryData = useRef(new Array(8000).fill(0).map((_, i) => ({ id: i, async: `async-${i}` })));
+
   useEffect(() => {
+    // Add memory usage
+    const memorySize = memoryData.current.length * 60; // 60 bytes per item simulation
+    memoryTracker.addLeakyMemory(memorySize);
+
     console.log("[LeakyAsync] 마운트됨");
 
     fetch("https://jsonplaceholder.typicode.com/users/1")
@@ -20,7 +28,8 @@ export default function LeakyAsyncComponent() {
 
     return () => {
       console.log("[LeakyAsync] 언마운트됨");
-      // 이 시점에 AbortController나 상태 추적 없이 클린업 없음
+      // ❌ AbortController나 상태 추적 없이 클린업 없음
+      // Memory cleanup is not performed
     };
   }, []);
 

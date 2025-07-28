@@ -1,11 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { memoryTracker } from '../memoryTracker';
 
 const LeakyEventComponent = ({id, onEventCount}) => {
     const [scrollCount, setScrollCount] = useState(0);
     const [resizeCount, setResizeCount] = useState(0);
     const [mouseCount, setMouseCount] = useState(0);
     const [keyCount, setKeyCount] = useState(0);
+
+    // Memory simulation - same size as SafeEventComponent
+    const memoryData = useRef(new Array(10000).fill(0).map((_, i) => ({ id: i, data: `event-data-${i}` })));
+
     useEffect(() => {
+    // Add memory usage
+    const memorySize = memoryData.current.length * 50; // 50 bytes per item simulation
+    memoryTracker.addLeakyMemory(memorySize);
+
     // 동일한 이벤트 핸들러들을 수동으로 등록
     const handleScroll = () => {
         setScrollCount(prev => prev + 1);

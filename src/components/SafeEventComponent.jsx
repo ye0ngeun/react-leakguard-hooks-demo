@@ -1,6 +1,6 @@
-import React from 'react'
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useSafeEventListener } from '../hooks/useSafeEventListener';
+import { memoryTracker } from '../memoryTracker';
 
 const SafeEventComponent = ({ onEventCount }) => {
   const [scrollCount, setScrollCount] = useState(0);
@@ -8,7 +8,21 @@ const SafeEventComponent = ({ onEventCount }) => {
   const [mouseCount, setMouseCount] = useState(0);
   const [keyCount, setKeyCount] = useState(0);
 
+  // Memory simulation - same size as LeakyEventComponent
+  const memoryData = useRef(new Array(10000).fill(0).map((_, i) => ({ id: i, data: `event-data-${i}` })));
+  const memorySize = useRef(0);
   
+    useEffect(() => {
+    // Add memory usage
+    memorySize.current = memoryData.current.length * 50; // 50 bytes per item simulation
+    memoryTracker.addSafeMemory(memorySize.current);
+
+    return () => {
+      // ✅ Memory cleanup
+      memoryTracker.removeSafeMemory(memorySize.current);
+    };
+  }, []);
+
     useSafeEventListener('scroll', useCallback(() => {
       setScrollCount(prev => prev + 1);
       onEventCount?.('safe', 'scroll');

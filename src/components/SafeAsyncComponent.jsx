@@ -1,4 +1,6 @@
 import useSafeAsync from '../hooks/useSafeAsync';
+import { useEffect, useRef } from 'react';
+import { memoryTracker } from '../memoryTracker';
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -14,6 +16,22 @@ function loadUser(signal) {
 }
 
 export default function SafeAsyncCompoent() {
+  
+    // Memory simulation - same size as LeakyAsyncComponent
+    const memoryData = useRef(new Array(8000).fill(0).map((_, i) => ({ id: i, async: `async-${i}` })));
+    const memorySize = useRef(0);
+  
+      useEffect(() => {
+      // Add memory usage
+      memorySize.current = memoryData.current.length * 60; // 60 bytes per item simulation
+      memoryTracker.addSafeMemory(memorySize.current);
+  
+      return () => {
+        // ✅ Memory cleanup
+        memoryTracker.removeSafeMemory(memorySize.current);
+      };
+    }, []);
+
   const { status, result: user, error } = useSafeAsync(
     loadUser, 
     [], 

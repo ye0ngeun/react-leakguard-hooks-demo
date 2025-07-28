@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import LeakyComponent from './components/LeakyComponent';
 import SafeComponent from './components/SafeComponent';
+import { memoryTracker } from './memoryTracker'
 
 
 const MemoryLeakDemo = () => {
@@ -8,6 +9,19 @@ const MemoryLeakDemo = () => {
   const [safeComponents, setSafeComponents] = useState([]);
   const [eventLog, setEventLog] = useState([]);
   const [isMonitoring, setIsMonitoring] = useState(false);
+  const [memoryStats, setMemoryStats] = useState({ leaky: 0, safe: 0 });
+
+  // Memory tracking update
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMemoryStats({
+        leaky: memoryTracker.getLeakyMemory(),
+        safe: memoryTracker.getSafeMemory()
+      });
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleEventCount = useCallback((type, eventName) => {
     if (isMonitoring) {
@@ -43,6 +57,14 @@ const MemoryLeakDemo = () => {
     setEventLog([]);
   };
 
+  const formatMemorySize = (bytes) => {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
   useEffect(() => {
     if (isMonitoring) {
       console.log('📊 이벤트 모니터링 시작 - 콘솔에서 이벤트 등록/해제 로그를 확인하세요');
@@ -65,6 +87,16 @@ const MemoryLeakDemo = () => {
       <div className="bg-gray-100 border border-gray-300 rounded-lg p-4">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-gray-800">🎛️ 컨트롤 패널</h2>
+          <button
+            onClick={() => setIsMonitoring(!isMonitoring)}
+            className={`px-4 py-2 rounded ${
+              isMonitoring 
+                ? 'bg-purple-500 text-white hover:bg-purple-600' 
+                : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+            }`}
+          >
+            {isMonitoring ? '모니터링 중지' : '모니터링 시작'}
+          </button>
         </div>
         
         <div className="grid md:grid-cols-2 gap-6">
@@ -87,6 +119,9 @@ const MemoryLeakDemo = () => {
             <p className="text-sm text-red-600">
               활성 컴포넌트: {leakyComponents.length}개
             </p>
+            <p className="text-sm font-semibold text-red-700">
+              누적 메모리: {formatMemorySize(memoryStats.leaky)}
+            </p>
           </div>
 
           <div className="space-y-3">
@@ -107,6 +142,9 @@ const MemoryLeakDemo = () => {
             </div>
             <p className="text-sm text-green-600">
               활성 컴포넌트: {safeComponents.length}개
+            </p>
+            <p className="text-sm font-semibold text-green-700">
+              누적 메모리: {formatMemorySize(memoryStats.safe)}
             </p>
           </div>
         </div>
