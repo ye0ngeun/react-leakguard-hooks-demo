@@ -33,18 +33,9 @@ const MemoryLeakDemo = () => {
 
   const removeAllSafe = () => {
     setSafeComponents([]);
+    // 전역 메모리 정리
     if (window.safeData) {
       delete window.safeData;
-    }
-  };
-
-  const forceGarbageCollection = () => {
-    // 가비지 컬렉션 강제 실행 (개발자 도구에서만 가능)
-    if (window.gc) {
-      window.gc();
-      alert('가비지 컬렉션이 실행되었습니다. Memory 탭에서 변화를 확인해보세요.');
-    } else {
-      alert('가비지 컬렉션을 수동으로 실행하려면 Chrome을 --enable-precise-memory-info --js-flags="--expose-gc" 플래그와 함께 실행해야 합니다.');
     }
   };
 
@@ -71,14 +62,12 @@ const MemoryLeakDemo = () => {
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       <div className="text-center">
         <h1 className="text-4xl font-bold text-gray-800 mb-4">
-          메모리 누수 방지 커스텀 훅 효과 확인 데모 사이트
+          메모리 누수 방지 커스텀 훅 효과 확인 데모 페이지
         </h1>
         <p className="text-gray-600 text-lg">
           우리FIS 아카데미 프론트엔드 세미나
         </p>
       </div>
-
-
 
       <div className="bg-gray-100 border border-gray-300 rounded-lg p-4">
         <div className="flex justify-between items-center mb-4">
