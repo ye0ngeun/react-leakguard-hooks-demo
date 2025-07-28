@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 
-/**
+/** 
  * 안전하게 setInterval을 등록하고, 컴포넌트 언마운트 시 자동으로 해제해주는 커스텀 훅입니다.
  * 개발 환경에서는 클린업이 제대로 안 될 경우 경고 메시지를 출력합니다.
- *
+ * 
  * @param {Function} callback - 일정 시간마다 실행할 함수
  * @param {number} delay - 밀리초(ms) 단위 간격
  */
@@ -12,13 +12,15 @@ export function useSafeSetInterval(callback, delay) {
   const cleanupCalled = useRef(false);
   const intervalActive = useRef(false);
 
+    console.log('setInterval 실행');
+    
   useEffect(() => {
     // interval 등록
     const id = setInterval(callback, delay);
     intervalIdRef.current = id;
     intervalActive.current = true;
     cleanupCalled.current = false;
-
+    
     // cleanup 함수
     return () => {
       cleanupCalled.current = true;
@@ -38,8 +40,8 @@ export function useSafeSetInterval(callback, delay) {
       ) {
         console.warn(
           `[useSafeSetInterval] ⚠️ 메모리 누수 발견! ` +
-            `interval이 해제되지 않았습니다! ` +
-            `컴포넌트가 정상적으로 언마운트되고 있는지 확인해 주세요!`
+          `interval이 해제되지 않았습니다! ` +
+          `컴포넌트가 정상적으로 언마운트되고 있는지 확인해 주세요!`
         );
       }
     };
@@ -54,5 +56,5 @@ export function useSafeSetInterval(callback, delay) {
 // const [count, setCount] = useState(0);
 // const callback = () => {
 //   setCount((c) => c + 1);
-// };
+// }; 
 // useSafeSetInterval(callback, 1000);
