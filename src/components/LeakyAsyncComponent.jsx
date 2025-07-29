@@ -16,6 +16,8 @@ export default function LeakyAsyncComponent() {
         await delay(3000); // ⏳ 일부러 지연
         setUser(data);
         console.log("[LeakyAsync] 데이터 패칭 완료됨");
+        const bigArray = new Array(1000000).fill(0);
+        console.log(bigArray);
       });
 
     return () => {
@@ -29,9 +31,15 @@ export default function LeakyAsyncComponent() {
       <h2>[비동기 요청] 유저 정보</h2>
       {user ? (
         <ul>
-          <li><strong>이름:</strong> {user.name}</li>
-          <li><strong>웹사이트:</strong> {user.website}</li>
-          <li><strong>회사:</strong> {user.company?.name}</li>
+          <li>
+            <strong>이름:</strong> {user.name}
+          </li>
+          <li>
+            <strong>웹사이트:</strong> {user.website}
+          </li>
+          <li>
+            <strong>회사:</strong> {user.company?.name}
+          </li>
         </ul>
       ) : (
         <p>⏳ 로딩 중...</p>
