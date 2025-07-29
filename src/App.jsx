@@ -55,7 +55,8 @@ const MemoryLeakDemo = () => {
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       <div className="text-center">
         <h1 className="text-4xl font-bold text-gray-800 mb-4">
-          메모리 누수 방지 커스텀 훅 효과 확인 데모 페이지
+          메모리 누수 방지 커스텀 훅<br/>
+          효과 검증 데모 페이지
         </h1>
         <p className="text-gray-600 text-lg">
           우리FIS 아카데미 프론트엔드 세미나
@@ -161,52 +162,6 @@ const MemoryLeakDemo = () => {
                 안전한 컴포넌트를 추가해보세요
               </div>
             )}
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-        <h2 className="font-bold text-yellow-800 mb-2">🧪 실험 시나리오</h2>
-        <div className="text-sm text-yellow-700 space-y-2">
-          <p><strong>1단계:</strong> 각각 3-5개의 컴포넌트를 추가하고 모니터링 시작</p>
-          <p><strong>2단계:</strong> 스크롤, 윈도우 리사이즈, 마우스 이동, 키보드 입력으로 이벤트 발생</p>
-          <p><strong>3단계:</strong> Memory 탭에서 Heap snapshot 촬영</p>
-          <p><strong>4단계:</strong> "모두 제거" 클릭 후 콘솔 로그 확인</p>
-          <p><strong>5단계:</strong> 다시 Heap snapshot 촬영하여 메모리 해제 여부 비교</p>
-          <p className="font-semibold text-yellow-800">
-            💡 핵심: LeakyComponent 제거 후에도 이벤트가 계속 발생하지만, SafeComponent는 완전히 정리됨
-          </p>
-        </div>
-      </div>
-
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-        <h2 className="font-bold text-gray-800 mb-3">🔍 코드 비교</h2>
-        
-        <div className="grid md:grid-cols-2 gap-4">
-          <div>
-            <h3 className="font-semibold text-red-600 mb-2">❌ LeakyComponent</h3>
-            <pre className="bg-red-50 p-3 rounded text-xs overflow-x-auto">
-{`useEffect(() => {
-  const handleScroll = () => { /* ... */ };
-  
-  // 수동 등록
-  window.addEventListener('scroll', handleScroll);
-  
-  // ❌ cleanup 함수 없음!
-}, []);`}
-            </pre>
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-green-600 mb-2">✅ SafeComponent</h3>
-            <pre className="bg-green-50 p-3 rounded text-xs overflow-x-auto">
-{`// 커스텀 훅 사용
-useSafeEventListener('scroll', useCallback(() => {
-  /* 동일한 로직 */
-}, []));
-
-// ✅ 자동으로 cleanup됨!`}
-            </pre>
           </div>
         </div>
       </div>
