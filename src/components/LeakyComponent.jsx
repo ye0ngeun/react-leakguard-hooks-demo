@@ -1,6 +1,6 @@
-import LeakyEventComponent from './LeakyEventComponent';
-import LeakyTimerComponent from './LeakyTimerComponent';
-import LeakyAsyncComponent from './LeakyAsyncComponent';
+import LeakyEventComponent from './without-custom-hooks/LeakyEventComponent.jsx';
+import LeakyTimerComponent from './without-custom-hooks/LeakyTimerComponent.jsx';
+import LeakyAsyncComponent from './without-custom-hooks/LeakyAsyncComponent.jsx';
 
 const LeakyComponent = ({ id, onEventCount }) => {
   return (

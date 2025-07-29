@@ -1,6 +1,6 @@
-import SafeTimerComponent from './SafeTimerComponent';
-import SafeEventComponent from './SafeEventComponent';
-import SafeAsyncCompoent from './SafeAsyncComponent';
+import SafeTimerComponent from './with-custom-hooks/SafeTimerComponent.jsx';
+import SafeEventComponent from './with-custom-hooks/SafeEventComponent.jsx';
+import SafeAsyncCompoent from './with-custom-hooks/SafeAsyncComponent.jsx';
 
 const SafeComponent = ({ id, onEventCount }) => {
   return (
