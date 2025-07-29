@@ -55,7 +55,8 @@ const MemoryLeakDemo = () => {
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       <div className="text-center">
         <h1 className="text-4xl font-bold text-gray-800 mb-4">
-          메모리 누수 방지 커스텀 훅 효과 확인 데모 페이지
+          메모리 누수 방지 커스텀 훅<br/>
+          효과 검증 데모 페이지
         </h1>
         <p className="text-gray-600 text-lg">
           우리FIS 아카데미 프론트엔드 세미나
