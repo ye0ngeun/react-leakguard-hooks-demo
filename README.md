@@ -1,5 +1,7 @@
 # Custom Hook Demo - Memory Leak Prevention Validation
 
+![데모페이지](./assets/demo.png)
+
 ## 📋 개요
 
 React 애플리케이션에서 발생할 수 있는 메모리 누수를 방지하는 `leakguard-hooks` 라이브러리의 효과를 실증적으로 검증하는 데모 프로젝트입니다. Chrome DevTools의 Performance 및 Memory 탭을 활용하여 메모리 누수 발생 컴포넌트와 안전한 컴포넌트 간의 성능 차이를 시각적으로 비교할 수 있습니다.
@@ -79,6 +81,8 @@ Chrome DevTools의 Performance 탭에서 Memory 오버레이를 활성화하여 
 
 ### Chrome DevTools Performance Tab 분석
 
+![퍼포먼스탭 결과](./assets/performance_tab.jpg)
+
 Performance 탭에서 Memory 오버레이를 활성화하여 레코딩하면 메모리 카운터 별 메모리 사용량을 확인할 수 있습니다:
 - **파란색 (JS Heap)**: JavaScript 힙 메모리 사용량
 - **초록색 (Nodes)**: DOM 노드 개수  
@@ -89,6 +93,12 @@ Performance 탭에서 Memory 오버레이를 활성화하여 레코딩하면 메
 - **SafeComponent**: 언마운트 시 참조가 올바르게 해제되어 GC 대상이 되므로 메모리 누수 없이 정상적인 메모리 회수 패턴 보임
 
 ### Chrome DevTools Memory Tab 분석  
+
+#### 누수 컴포넌트
+![누수컴포넌트](./assets/heap_snapshot_v_leaky.gif)
+
+#### 안전 컴포넌트
+![안전컴포넌트](./assets/heap_snapshot_v_safe.gif)
 
 힙 스냅샷 분석을 통한 메모리 누수 검증 방법:
 1. **초기 상태** → 스냅샷 촬영
