@@ -1,108 +1,119 @@
-# 🧠 React 메모리 누수 방지 커스텀 훅 데모
+# Custom Hook Demo - Memory Leak Prevention Validation
 
-> React에서 이벤트 리스너로 인한 메모리 누수를 방지하는 `useSafeEventListener` 커스텀 훅의 실전 데모 사이트
+## 📋 개요
 
-## 🎯 프로젝트 개요
+React 애플리케이션에서 발생할 수 있는 메모리 누수를 방지하는 `leakguard-hooks` 라이브러리의 효과를 실증적으로 검증하는 데모 프로젝트입니다. Chrome DevTools의 Performance 및 Memory 탭을 활용하여 메모리 누수 발생 컴포넌트와 안전한 컴포넌트 간의 성능 차이를 시각적으로 비교할 수 있습니다.
 
-이 프로젝트는 React 애플리케이션에서 자주 발생하는 **메모리 누수 문제**와 이를 해결하는 **커스텀 훅**의 효과를 시각적으로 보여주는 교육용 데모입니다.
+## 🔗 관련 링크
 
+- **NPM Package**: [leakguard-safe-hooks](https://www.npmjs.com/package/leakguard-safe-hooks)
+- **GitHub Repository**: [leakguard-hooks](https://github.com/noeyigg/leakguard-hooks)
+
+## 🎯 프로젝트 목적
+
+- **메모리 누수 패턴** 이해 및 시연
+- **leakguard-hooks 라이브러리**의 효과 검증
+- **Chrome DevTools**를 활용한 메모리 프로파일링 학습
+- **React 컴포넌트 생명주기**와 메모리 관리 모범 사례 학습
+
+## 🔧 주요 기능
+
+### LeakyComponent (메모리 누수 발생)
+- ❌ **이벤트 리스너** 정리 없이 등록만 수행
+- ❌ **setInterval** cleanup 없이 반복 실행
+- ❌ **비동기 요청** AbortController 없이 처리
+- ❌ 컴포넌트 언마운트 시에도 리소스가 계속 점유
+
+### SafeComponent (안전한 메모리 관리)
+- ✅ **useSafeEventListener** 자동 cleanup
+- ✅ **useSafeSetInterval** 자동 cleanup  
+- ✅ **useSafeAsync** AbortController 활용한 안전한 비동기 처리
+- ✅ 컴포넌트 언마운트 시 모든 리소스 자동 정리
+
+## 🚀 시작하기
 ### 로컬 실행
 ```bash
 # 저장소 복제
-git clone https://github.com/your-username/react-memory-leak-demo.git
-cd react-memory-leak-demo
+git clone https://github.com/ye0ngeun/custom-hook-demo.git
+cd memory-leak-demo
 
 # 의존성 설치
 npm install
 
-# 개발 서버 시작
-npm start
+# leakguard-safe-hooks 라이브러리가 이미 포함되어 있습니다
+# npm install leakguard-safe-hooks
+
+# 개발 서버 실행
+npm run dev
 ```
+### 데모 실행 방법
+1. 브라우저에서 애플리케이션 열기
+2. Chrome DevTools 열기 (F12)
+3. Performance, Memory Tab 활용
 
-## 📋 사용법
+## 📊 성능 검증 방법
 
-### 1. 기본 설정
-1. Chrome 브라우저에서 데모 사이트 접속
-2. `F12`로 개발자 도구 열기
-3. **Memory** 탭 또는 **Performance** 탭 이동
+### Performance Tab 분석
+Chrome DevTools의 Performance 탭에서 Memory 오버레이를 활성화하여 다음 메트릭을 관찰:
 
-### 2. 메모리 누수 체험
-```
-🔴 메모리 누수 테스트
-├── "누수 컴포넌트 추가" 버튼 여러 번 클릭
-├── 스크롤, 마우스 이동, 키보드 입력으로 이벤트 발생
-├── Memory 탭에서 Heap snapshot 촬영
-├── "모두 제거" 클릭 후 다시 snapshot 촬영
-└── 📈 메모리가 해제되지 않음을 확인!
-```
+- **JS Heap**: JavaScript 힙 메모리 사용량
+- **Nodes**: DOM 노드 개수  
+- **Listeners**: 이벤트 리스너 개수
 
-```
-🟢 안전한 관리 테스트
-├── "안전 컴포넌트 추가" 버튼 여러 번 클릭
-├── 동일한 상호작용 수행
-├── Memory 탭에서 Heap snapshot 촬영
-├── "모두 제거" 클릭 후 다시 snapshot 촬영
-└── ✅ 메모리가 적절히 해제됨을 확인!
-```
+#### 예상 결과
+- **LeakyComponent**: 컴포넌트 제거 후에도 메모리 사용량이 지속적으로 증가
+- **SafeComponent**: 컴포넌트 제거 시 메모리 사용량이 정상적으로 감소
 
-### 3. Performance 모니터링
-- Performance 탭에서 **Record** 시작
-- 컴포넌트들과 상호작용
-- **Memory 그래프**에서 누수 패턴 관찰
+### Memory Tab 분석 (Heap Snapshot)
+다음 3단계로 나누어 힙 스냅샷을 비교:
 
-## 🔧 핵심 기술
+1. **초기 상태**: 애플리케이션 로드 직후
+2. **컴포넌트 마운트 + 이벤트 발생**: 컴포넌트 추가 후 사용자 상호작용
+3. **컴포넌트 언마운트 + 이벤트 발생**: 컴포넌트 제거 후 추가 상호작용
 
-### `useSafeEventListener` 커스텀 훅
-```javascript
-const useSafeEventListener = (eventName, handler, element = null, options = {}) => {
-  // 최신 핸들러 참조 유지
-  const handlerRef = useRef(handler);
-  
-  useEffect(() => {
-    handlerRef.current = handler;
-  }, [handler]);
+#### 검증 포인트
+- **LeakyComponent**: 언마운트 후에도 힙 메모리가 해제되지 않음
+- **SafeComponent**: 언마운트 시 관련 메모리가 정상적으로 가비지 컬렉션됨
 
-  // 자동 cleanup을 통한 메모리 누수 방지
-  useEffect(() => {
-    const targetElement = element || window;
-    const eventHandler = (event) => handlerRef.current(event);
-    
-    targetElement.addEventListener(eventName, eventHandler, options);
-    
-    return () => {
-      targetElement.removeEventListener(eventName, eventHandler, options);
-    };
-  }, [eventName, element, options]);
-};
-```
+## 📈 실증 결과
 
-### 주요 해결 문제들
-- ✅ **이벤트 리스너 자동 정리**
-- ✅ **클로저 트랩(Stale Closure) 방지**
-- ✅ **타이머 및 구독 정리**
-- ✅ **메모리 사용량 제한**
-- ✅ **SSR 환경 대응**
+### Chrome DevTools Performance Tab 분석
+### Chrome DevTools Memory Tab 분석  
 
-## 📊 성능 비교
+### 메모리 누수 방지 효과 입증
+leakguard-hooks를 사용한 SafeComponent는:
+- ✅ 컴포넌트 언마운트 시 이벤트 리스너 자동 해제
+- ✅ 타이머 및 인터벌 자동 정리
+- ✅ AbortController를 통한 비동기 요청 취소
+- ✅ 개발 환경에서 누수 감지 및 경고 제공
 
-| 구분 | 메모리 누수 컴포넌트 | 안전한 컴포넌트 |
-|------|-------------------|----------------|
-| 이벤트 리스너 정리 | ❌ 정리 안됨 | ✅ 자동 정리 |
-| 타이머 관리 | ❌ 정리 안됨 | ✅ cleanup 함수 |
-| 메모리 사용량 | 📈 지속적 증가 | 📊 일정 수준 유지 |
-| 가비지 컬렉션 | ❌ 방해됨 | ✅ 정상 동작 |
+### 성능 향상 효과
+- 장시간 실행 시 메모리 사용량 안정화
+- 가비지 컬렉션 효율성 개선
+- 애플리케이션 응답성 유지
 
-## 📁 프로젝트 구조
+## 🛠️ 사용된 기술
 
-```
-src/
-├── components/
-│   ├── LeakyComponent.jsx        # 메모리 누수 시뮬레이션
-│   ├── SafeComponent.jsx         # 안전한 메모리 관리
-│   └── MemoryMonitor.jsx         # 실시간 모니터링
-├── hooks/
-│   └── useSafeEventListener.js   # 핵심 커스텀 훅
-├── utils/
-│   └── memoryUtils.js           # 메모리 관련 유틸
-└── App.jsx                      # 메인 데모 애플리케이션
-```
+### Core Technologies
+- **React 19**: 최신 React 기능 활용
+- **Vite**: 빠른 개발 서버 및 빌드
+- **Tailwind CSS**: 유틸리티 우선 스타일링
+
+### Custom Hooks
+- **useSafeEventListener**: 안전한 이벤트 리스너 관리
+- **useSafeSetInterval**: 안전한 타이머 관리  
+- **useSafeAsync**: 안전한 비동기 요청 처리
+
+### 개발 도구
+- **Chrome DevTools**: 메모리 프로파일링
+- **Performance API**: 실시간 메모리 모니터링
+
+## 📝 결론
+
+leakguard-hooks 라이브러리를 통해 React 애플리케이션의 메모리 누수를 효과적으로 방지할 수 있음을 실증적으로 검증했습니다. 특히 Chrome DevTools를 활용한 메모리 프로파일링을 통해 라이브러리의 효과를 정량적으로 측정할 수 있었으며, 이는 프로덕션 환경에서의 애플리케이션 안정성과 성능 향상에 직접적으로 기여할 것으로 기대됩니다.
+
+---
+
+**우리FIS 아카데미 프론트엔드 세미나**  
+React 렌더링 과정에서의 메모리 사용 분석과 최적화 전략:
+JavaScript 동작 원리를 중심으로
