@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 
 const LeakyEventComponent = ({id, onEventCount}) => {
     const [scrollCount, setScrollCount] = useState(0);
@@ -6,36 +6,48 @@ const LeakyEventComponent = ({id, onEventCount}) => {
     const [mouseCount, setMouseCount] = useState(0);
     const [keyCount, setKeyCount] = useState(0);
     useEffect(() => {
-    // 동일한 이벤트 핸들러들을 수동으로 등록
-    const handleScroll = () => {
-        setScrollCount(prev => prev + 1);
-        onEventCount?.('leak', 'scroll');
-    };
+        // 동일한 이벤트 핸들러들을 수동으로 등록
+        const handleScroll = () => {
+            setScrollCount(prev => prev + 1);
+            const bigArray = new Array(10000).fill(0);
+            console.log(bigArray);
+            onEventCount
+                ?.('leak', 'scroll');
+        };
 
-    const handleResize = () => {
-        setResizeCount(prev => prev + 1);
-        onEventCount?.('leak', 'resize');
-    };
+        const handleResize = () => {
+            setResizeCount(prev => prev + 1);
+            const bigArray = new Array(10000).fill(0);
+            console.log(bigArray);
+            onEventCount
+                ?.('leak', 'resize');
+        };
 
-    const handleMouseMove = () => {
-        setMouseCount(prev => prev + 1);
-        onEventCount?.('leak', 'mousemove');
-    };
+        const handleMouseMove = () => {
+            setMouseCount(prev => prev + 1);
+            const bigArray = new Array(10000).fill(0);
+            console.log(bigArray);
+            onEventCount
+                ?.('leak', 'mousemove');
+        };
 
-    const handleKeyDown = () => {
-        setKeyCount(prev => prev + 1);
-        onEventCount?.('leak', 'keydown');
-    };
+        const handleKeyDown = () => {
+            setKeyCount(prev => prev + 1);
+            const bigArray = new Array(10000).fill(0);
+            console.log(bigArray);
+            onEventCount
+                ?.('leak', 'keydown');
+        };
 
-    // ❌ 이벤트 리스너 등록만 하고 정리하지 않음
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('resize', handleResize);
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('keydown', handleKeyDown);
-    
-    console.log(`❌ LeakyComponent ${id}: 이벤트 리스너 등록 (정리 안됨)`);
+        // ❌ 이벤트 리스너 등록만 하고 정리하지 않음
+        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('resize', handleResize);
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('keydown', handleKeyDown);
 
-    // ❌ cleanup 함수가 없어서 메모리 누수 발생!
+        console.log(`❌ LeakyComponent ${id}: 이벤트 리스너 등록 (정리 안됨)`);
+
+        // ❌ cleanup 함수가 없어서 메모리 누수 발생!
     }, [id, onEventCount]);
 
     return (
