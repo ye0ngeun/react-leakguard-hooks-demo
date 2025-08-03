@@ -1,4 +1,4 @@
-# Custom Hook Demo - Memory Leak Prevention Validation
+# LeakyGaurd 라이브러리 성능검증 데모
 
 ![데모페이지](./assets/demo.png)
 
